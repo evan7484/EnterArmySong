@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="army.css" />
+    <title>당신의 입대곡은?</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+	<div class = "container">
+        <h1 style="color:yellow">입대일을 입력해주세요<br><h1>
+        <input id ="date-input" type="date" class="btn">
+    </div>
+    <ul id="songs-list"></ul>
+    
+    <script>    
+        // 노래 데이터베이스
+        const songs = [
+            { title: "", artist: "", releaseDate: { start: "", end: "" } },
+            { title: "Super Shy", artist: "NewJeans", releaseDate: { start: "2023-07-10", end: "2023-08-27" } },
+            { title: "Seven (feat. Latto) - Clean Ver.", artist: "정국", releaseDate: { start: "2023-08-28", end: "2023-09-03" } },
+            { title: "Love Lee", artist: "AKMU(악뮤)", releaseDate: { start: "2023-09-04", end: "2023-11-05" } },
+            { title: "Baddie", artist: "IVE(아이브)", releaseDate: { start: "2023-11-06", end: "2023-11-19" } },
+            { title: "Perfect Night", artist: "LE SSERAFIM(르세라핌)", releaseDate: { start: "2023-11-20", end: "2024-01-07" } },
+            { title: "비의 랩소디", artist: "임재현", releaseDate: { start: "2024-01-08", end: "2024-01-28" } },
+            { title: "Love wins all", artist: "아이유", releaseDate: { start: "2024-01-29", end: "2024-02-25" } },
+            { title: "밤양갱", artist: "비비(BIBI)", releaseDate: { start: "2024-02-26", end: "2024-03-17" } },
+            { title: "나는 아픈 건 딱 질색이니까", artist: "(여자)아이들", releaseDate: { start: "2024-03-18", end: "2024-04-07" } },
+            { title: "Magnetic", artist: "아일릿(ILLIT)", releaseDate: { start: "2024-04-08", end: "2024-04-28" } },
+            { title: "SPOT! (feat. JENNIE)", artist: "지코(ZICO)", releaseDate: { start: "2024-04-29", end: "2024-05-19" } },
+            { title: "Supernova", artist: "aespa", releaseDate: { start: "2024-05-20", end: "2024-09-01" } },
+            { title: "녹아내려요", artist: "DAY6(데이식스)", releaseDate: { start: "2024-09-02", end: "2024-09-15" } },
+            { title: "HAPPY", artist: "DAY6(데이식스)", releaseDate: { start: "2024-09-16", end: "2024-10-13" } },
+            { title: "UP (KARINA Solo)", artist: "aespa", releaseDate: { start: "2024-10-14", end: "2024-10-20" }},
+            { title: "APT", artist: "로제(ROSE), Bruno Mars", releaseDate: { start: "2024-10-21", end: "2024-11-24" } },
+            { title: "HOME SWEET HOME (feat. 태양, 대성)", artist: "G-DRADON", releaseDate: { start: "2024-11-25", end: "2025-02-09" } },
+            { title: "REBEL HEART", artist: "IVE(아이브)", releaseDate: { start: "2025-02-10", end: "2025-02-23" } },
+            { title: "TOO BAD", artist: "G-DRAGON", releaseDate: { start: "2025-02-24", end: "2025-03-06" } },
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const dateInput = document.getElementById('date-input');
+            dateInput.addEventListener('change', () => {
+                const inputDate = new Date(dateInput.value);
+                const songsList = document.getElementById('songs-list');
+                songsList.innerHTML = '';
+
+                const filteredSongs = songs.filter(song => {
+                    if (typeof song.releaseDate === 'object') {
+                        const startDate = new Date(song.releaseDate.start);
+                        const endDate = new Date(song.releaseDate.end);
+                        return inputDate >= startDate && inputDate <= endDate;
+                    } else {
+                        const songDate = new Date(song.releaseDate);
+                        return songDate.getTime() === inputDate.getTime();
+                    }
+                });
+
+                if (filteredSongs.length > 0) {
+                    filteredSongs.forEach(song => {
+                        const listItem = document.createElement('li');
+                        listItem.textContent = `당신의 입대곡은 ${song.artist} - ${song.title}입니다!`;
+                        listItem.style.color = 'yellow';
+                        songsList.appendChild(listItem);
+                    });
+                } else {
+                    songsList.innerHTML = '<li style="color:yellow">해당 날짜는 아직 조회가 불가능합니다.</li>';
+                }
+            });
+        });
+        // document.addEventListener('DOMContentLoaded', async () => {
+        //     const dateInput = document.getElementById('date-input');
+        //     dateInput.addEventListener('change', async () => {
+        //         const inputDate = dateInput.value;
+        //         try {
+        //             const response = await fetch('http://localhost:3000/fetch-songs');
+        //             const songs = await response.json();
+        //             const songsList = document.getElementById('songs-list');
+        //             songsList.innerHTML = '';
+
+        //             const filteredSongs = songs.filter(song => {
+        //                 const songDate = new Date(song.releaseDate);
+        //                 const inputDateObj = new Date(inputDate);
+        //                 return songDate.getFullYear() === inputDateObj.getFullYear() &&
+        //                        songDate.getMonth() === inputDateObj.getMonth() &&
+        //                        songDate.getDate() === inputDateObj.getDate();
+        //             });
+
+        //             if (filteredSongs.length > 0) {
+        //                 filteredSongs.forEach(song => {
+        //                     const listItem = document.createElement('li');
+        //                     listItem.textContent = `${song.title} (${song.releaseDate})`;
+        //                     songsList.appendChild(listItem);
+        //                 });
+        //             } else {
+        //                 songsList.innerHTML = '<li>해당 날짜에 출시된 노래가 없습니다.</li>';
+        //             }
+        //         } catch (error) {
+        //             console.error('Error fetching songs:', error);
+        //         }
+        //     });
+        // });
+    </script>
+</body>
+</html>
